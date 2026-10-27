@@ -1,0 +1,49 @@
+/**
+  *  Universidad de Costa Rica
+  *  ECCI
+  *  CI0123 Proyecto integrador de redes y sistemas operativos
+  *  2026-ii
+  *  Grupos: 2 y 5
+  *
+  *   SSL Socket class interface
+  *
+  * (Fedora version)
+  *
+ **/
+
+#ifndef SSLSocket_h
+#define SSLSocket_h
+
+#include "VSocket.h"
+
+
+class SSLSocket : public VSocket {
+
+   public:
+      SSLSocket( bool IPv6 = false );				// Not possible to create with UDP, client constructor
+      SSLSocket( const char *, const char *, bool = false );	// For server connections
+      SSLSocket( int );
+      ~SSLSocket();
+      int Connect( const char *, int );
+      int Connect( const char *, const char * );
+      size_t Write( const char * );
+      size_t Write( const void *, size_t );
+      size_t Read( void *, size_t );
+      void Close();					// avisa el cierre por TLS (close_notify) antes de cerrar el descriptor
+      void ShowCerts();
+      const char * GetCipher();
+      VSocket * AcceptConnection();
+      VSocket * CompletarConexion( int );		// saludo TLS de una conexion ya aceptada con WaitForConnection
+
+   private:
+      void InitSSL( bool = false );		// Defaults to create a client context, true if server context needed
+      void InitContext( bool );
+      void LoadCertificates( const char *, const char * );
+
+// Instance variables
+      void * Context;				// SSL context
+      void * BIO;				// SSL BIO (Basic Input/Output)
+
+};
+
+#endif
